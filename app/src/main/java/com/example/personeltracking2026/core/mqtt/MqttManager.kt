@@ -145,6 +145,17 @@ class MqttManager(private val context: Context) {
         val user   = config.username
         val pass   = config.password
 
+        Log.d(
+            "MQTT_CONFIG",
+            """
+        CONNECT USING:
+        host=$host
+        port=$port
+        username=$user
+        useWebSocket=${config.useWebSocket}
+        """.trimIndent()
+        )
+
         val clientId = "android_${Build.MODEL}_${System.currentTimeMillis()}"
             .replace(" ", "_")
             .take(23)

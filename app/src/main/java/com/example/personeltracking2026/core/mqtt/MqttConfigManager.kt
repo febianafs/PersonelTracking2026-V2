@@ -19,11 +19,11 @@ class MqttConfigManager(context: Context) {
 
     fun load(): MqttConfig {
         return MqttConfig(
-            host         = prefs.getString("host",     "202.10.40.148") ?: "202.10.40.148",
+            host         = prefs.getString("host",     "76.13.20.253") ?: "76.13.20.253",
             tcpPort      = prefs.getInt("tcp_port",    1883),
             wsPort       = prefs.getInt("ws_port",     9001),
-            username     = prefs.getString("username", "turjawali")        ?: "turjawali",
-            password     = prefs.getString("password", "turjawali2026")    ?: "turjawali2026",
+            username     = prefs.getString("username", "kodau")        ?: "kodau",
+            password     = prefs.getString("password", "kodau2026")    ?: "kodau2026",
             useWebSocket = prefs.getBoolean("use_ws",  true)
         )
     }

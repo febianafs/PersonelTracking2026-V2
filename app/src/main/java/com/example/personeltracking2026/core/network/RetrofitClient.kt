@@ -8,8 +8,8 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
 
-    //private const val BASE_URL = "https://api.kodauemws.com/"
-    private const val BASE_URL = "https://api.aturwalpat.com/"
+    private const val BASE_URL = "https://api.kodauemws.com/"
+//    private const val BASE_URL = "https://api.aturwalpat.com/"
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY

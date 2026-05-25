@@ -237,6 +237,9 @@ class SettingsActivity : BaseActivity() {
             MqttConfigManager(this).save(config)
             MqttTopicManager(this).save(topicConfig)
 
+            val app = application as? com.example.personeltracking2026.App
+            app?.mqttManager?.reconnectWithNewSettings()
+
             showSavedIndicator()
         }
 
