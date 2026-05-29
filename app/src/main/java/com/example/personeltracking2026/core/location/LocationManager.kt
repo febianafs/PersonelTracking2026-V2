@@ -88,14 +88,13 @@ class AppLocationManager(private val context: Context) {
 
         fusedCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
-                result.lastLocation?.let { location ->
-                    onLocationUpdate?.invoke(
-                        location.latitude,
-                        location.longitude,
-                        location.accuracy,
-                        "Fused"
-                    )
-                }
+                val location = result.locations.lastOrNull() ?: return
+                onLocationUpdate?.invoke(
+                    location.latitude,
+                    location.longitude,
+                    location.accuracy,
+                    "Fused"
+                )
             }
         }
 
@@ -119,16 +118,6 @@ class AppLocationManager(private val context: Context) {
     // ─── LEGACY (Android LocationManager) ───────────────────────────────────
 
     private fun startLegacyUpdates() {
-        locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-        try {
-            locationManager?.registerGnssStatusCallback(
-                gnssCallback,
-                Handler(Looper.getMainLooper())
-            )
-        } catch (e: SecurityException) {
-            onLocationError?.invoke("GNSS permission denied")
-        }
 
         val locationListener = object : LocationListener {
             override fun onLocationChanged(location: Location) {
@@ -184,9 +173,6 @@ class AppLocationManager(private val context: Context) {
     }
 
     private fun stopLegacyUpdates() {
-        gnssCallback.let {
-            locationManager?.unregisterGnssStatusCallback(it)
-        }
         gpsListener?.let { locationManager?.removeUpdates(it) }
         networkListener?.let { locationManager?.removeUpdates(it) }
         gpsListener = null
@@ -210,8 +196,8 @@ class AppLocationManager(private val context: Context) {
         if (currentBest == null) return true
 
         val timeDelta = location.time - currentBest.time
-        val isSignificantlyNewer = timeDelta > 2 * 60 * 1000 // 2 menit
-        val isSignificantlyOlder = timeDelta < -(2 * 60 * 1000)
+        val isSignificantlyNewer = timeDelta > 30 * 1000   // Ubah: 2 menit → 30 detik
+        val isSignificantlyOlder = timeDelta < -(30 * 1000)
         val isNewer = timeDelta > 0
 
         if (isSignificantlyNewer) return true
@@ -221,12 +207,11 @@ class AppLocationManager(private val context: Context) {
         val isMoreAccurate = accuracyDelta < 0
         val isSignificantlyLessAccurate = accuracyDelta > 200
 
-        val isFromSameProvider = location.provider == currentBest.provider
+//        val isFromSameProvider = location.provider == currentBest.provider
 
         return when {
             isMoreAccurate -> true
             isNewer && !isSignificantlyLessAccurate -> true
-            isNewer && !isSignificantlyLessAccurate && isFromSameProvider -> true
             else -> false
         }
     }

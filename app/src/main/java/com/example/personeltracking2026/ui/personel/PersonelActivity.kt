@@ -85,7 +85,7 @@ class PersonelActivity : BaseActivity() {
         PersonelViewModel.Factory(
             application,
             PersonelRepository(),
-            LocationRepository(this),
+            (application as App).locationRepository,
             SessionManager(this)
         )
     }
@@ -278,12 +278,6 @@ class PersonelActivity : BaseActivity() {
             applyMapType(newType)
         }
 
-        val interval = parseIntervalToMs(
-            mqttPrefs.getString("interval", "5 seconds") ?: "5 seconds"
-        )
-
-        viewModel.updateInterval(interval)
-
         val app = application as App
         val identity = DeviceIdentityManager(this).getIdentity() ?: return
 
@@ -351,7 +345,6 @@ class PersonelActivity : BaseActivity() {
                         state.data?.let {
                             if (!firstLocationReceived) {
                                 firstLocationReceived = true
-                                viewModel.startPublishing()
                             }
                         }
 
@@ -757,7 +750,7 @@ class PersonelActivity : BaseActivity() {
 
         isLocationStarted = true
 
-        viewModel.startLocationUpdates(2000)
+        viewModel.startLocationUpdates() // tidak perlu kirim 2000 lagi
         Log.d("INIT", "START GPS")
     }
 

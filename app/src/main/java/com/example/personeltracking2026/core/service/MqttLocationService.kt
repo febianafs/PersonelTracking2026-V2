@@ -5,44 +5,44 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.BatteryManager
+import android.content.IntentFilter
 import android.content.pm.ServiceInfo
-import androidx.core.app.ServiceCompat
+import android.os.BatteryManager
 import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
-import android.provider.Settings
 import android.util.Log
-import android.content.BroadcastReceiver
-import android.content.IntentFilter
 import androidx.core.app.NotificationCompat
+import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import com.example.personeltracking2026.App
 import com.example.personeltracking2026.BuildConfig
 import com.example.personeltracking2026.R
+import com.example.personeltracking2026.core.device.DeviceMode
 import com.example.personeltracking2026.core.location.AppLocationManager
 import com.example.personeltracking2026.core.mqtt.MqttPayloadBuilder
 import com.example.personeltracking2026.core.mqtt.MqttReconnectManager
 import com.example.personeltracking2026.core.session.SessionManager
 import com.example.personeltracking2026.core.utils.Constants
+import com.example.personeltracking2026.data.model.LocationData
 import com.example.personeltracking2026.utils.DeviceIdentityManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import com.example.personeltracking2026.core.device.DeviceMode
 
 class MqttLocationService : Service() {
 
     companion object {
-        private const val TAG           = "MqttLocationService"
-        const val CHANNEL_ID            = "mqtt_location_channel"
-        const val NOTIFICATION_ID       = 1001
-        private const val ACTION_START  = "ACTION_START"
-        private const val ACTION_STOP   = "ACTION_STOP"
+        private const val TAG          = "MqttLocationService"
+        const val CHANNEL_ID           = "mqtt_location_channel"
+        const val NOTIFICATION_ID      = 1001
+        private const val ACTION_START = "ACTION_START"
+        private const val ACTION_STOP  = "ACTION_STOP"
 
         fun startService(context: Context) {
             val intent = Intent(context, MqttLocationService::class.java).apply {
@@ -65,23 +65,25 @@ class MqttLocationService : Service() {
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    private lateinit var sessionManager: SessionManager
+    private lateinit var sessionManager    : SessionManager
     private lateinit var appLocationManager: AppLocationManager
-    private lateinit var reconnectManager: MqttReconnectManager
-    private lateinit var wakeLock: PowerManager.WakeLock
+    private lateinit var reconnectManager  : MqttReconnectManager
+    private lateinit var wakeLock          : PowerManager.WakeLock
 
-    // Throttle — cegah publish duplikat
-    private var lastPublishTime = 0L
+    // Cache identity — dibuat sekali di onCreate, bukan tiap publish
+    private var cachedSerial   : String? = null
+    private var cachedAndroidId: String? = null
+
+    // Throttle
+    private var lastPublishTime  = 0L
     private var publishIntervalMs = 5000L
 
     private val intervalChangedReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action != Constants.ACTION_INTERVAL_CHANGED) return
-
             val intervalText = intent.getStringExtra(Constants.EXTRA_INTERVAL_TEXT)
                 ?: Constants.DEFAULT_INTERVAL_TEXT
-
-            Log.d(TAG, "Interval changed broadcast received: $intervalText")
+            Log.d(TAG, "Interval changed: $intervalText")
             applyNewInterval(intervalText)
         }
     }
@@ -92,26 +94,32 @@ class MqttLocationService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        sessionManager      = SessionManager(this)
-        appLocationManager  = AppLocationManager(this)
-        reconnectManager    = MqttReconnectManager(this, (application as App).mqttManager)
 
-        // WakeLock agar CPU tidak sleep saat publish
+        sessionManager       = SessionManager(this)
+        appLocationManager   = AppLocationManager(this)
+        reconnectManager     = MqttReconnectManager(this, (application as App).mqttManager)
+
+        // Cache identity sekali saja
+        val identity = DeviceIdentityManager(this).getIdentity()
+        cachedSerial    = identity?.serial
+        cachedAndroidId = identity?.androidId
+
+        // WakeLock
         val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
         wakeLock = pm.newWakeLock(
             PowerManager.PARTIAL_WAKE_LOCK,
             "PersonelTracking::MqttWakeLock"
-        ).apply { acquire(60 * 60 * 1000L) } // max 1 jam, auto release
+        ).apply { acquire(60 * 60 * 1000L) }
 
         createNotificationChannel()
-        val filter = IntentFilter(Constants.ACTION_INTERVAL_CHANGED)
 
         ContextCompat.registerReceiver(
             this,
             intervalChangedReceiver,
-            filter,
+            IntentFilter(Constants.ACTION_INTERVAL_CHANGED),
             ContextCompat.RECEIVER_NOT_EXPORTED
         )
+
         Log.d(TAG, "Service created")
     }
 
@@ -119,7 +127,6 @@ class MqttLocationService : Service() {
         when (intent?.action) {
             ACTION_START -> {
                 Log.d(TAG, "Service starting")
-
                 try {
                     ServiceCompat.startForeground(
                         this,
@@ -153,13 +160,8 @@ class MqttLocationService : Service() {
         reconnectManager.stop()
         appLocationManager.stopUpdates()
         serviceScope.cancel()
-        if (::wakeLock.isInitialized && wakeLock.isHeld) {
-            wakeLock.release()
-        }
-        try {
-            unregisterReceiver(intervalChangedReceiver)
-        } catch (_: Exception) {
-        }
+        if (::wakeLock.isInitialized && wakeLock.isHeld) wakeLock.release()
+        try { unregisterReceiver(intervalChangedReceiver) } catch (_: Exception) {}
         Log.d(TAG, "Service destroyed")
     }
 
@@ -176,14 +178,24 @@ class MqttLocationService : Service() {
         publishIntervalMs = parseIntervalToMs(intervalStr)
 
         appLocationManager.setInterval(publishIntervalMs)
-
-        // reset throttle saat mulai
         lastPublishTime = 0L
+
+        val app = application as App
 
         appLocationManager.onLocationUpdate = { lat, lon, accuracy, source ->
             val now = System.currentTimeMillis()
 
-            // THROTTLE: hanya publish kalau sudah lewat interval sejak publish terakhir
+            // Update global state di App (untuk SosManager dll)
+            app.currentLat      = lat
+            app.currentLon      = lon
+            app.currentAccuracy = accuracy
+
+            // Emit ke LocationRepository → UI bisa observe via ViewModel
+            serviceScope.launch {
+                app.locationRepository.emit(LocationData(lat, lon, accuracy, source))
+            }
+
+            // Publish MQTT dengan throttle
             if (now - lastPublishTime >= publishIntervalMs) {
                 lastPublishTime = now
                 Log.d(TAG, "Location [$source]: $lat, $lon → publishing")
@@ -195,30 +207,27 @@ class MqttLocationService : Service() {
 
         appLocationManager.onLocationError = { message ->
             Log.e(TAG, "Location error: $message")
+            serviceScope.launch {
+                app.locationRepository.emitError(message)
+            }
         }
 
         appLocationManager.startUpdates()
-        Log.d(TAG, "Location updates started — interval: ${publishIntervalMs / 1000}s (${publishIntervalMs} ms)")
+        Log.d(TAG, "Location updates started — interval: ${publishIntervalMs / 1000}s")
     }
 
     private fun applyNewInterval(intervalText: String) {
         val newIntervalMs = parseIntervalToMs(intervalText)
-
         if (newIntervalMs == publishIntervalMs) {
-            Log.d(TAG, "Interval unchanged, skip restart: $newIntervalMs ms")
+            Log.d(TAG, "Interval unchanged, skip: $newIntervalMs ms")
             return
         }
-
-        Log.d(TAG, "Applying new interval: $intervalText -> $newIntervalMs ms")
-
+        Log.d(TAG, "Applying new interval: $intervalText → $newIntervalMs ms")
         publishIntervalMs = newIntervalMs
-        lastPublishTime = 0L
-
+        lastPublishTime   = 0L
         appLocationManager.stopUpdates()
         appLocationManager.setInterval(publishIntervalMs)
         appLocationManager.startUpdates()
-
-        Log.d(TAG, "Location interval updated without restarting service")
     }
 
     // ─────────────────────────────────────────────
@@ -230,37 +239,33 @@ class MqttLocationService : Service() {
             val app = application as App
 
             if (app.currentMode != DeviceMode.RADIO) {
-                Log.d(TAG, "Not RADIO mode -> skip publish")
+                Log.d(TAG, "Not RADIO mode → skip publish")
                 return@launch
             }
 
             val mqttManager = app.mqttManager
-
             if (!mqttManager.isConnected()) {
                 Log.d(TAG, "MQTT not connected, skip publish")
                 return@launch
             }
 
-            val deviceManager = DeviceIdentityManager(this@MqttLocationService)
-            val identity = deviceManager.getIdentity()
-
-            if (identity == null) {
-                Log.e("MQTT", "Serial number is required")
+            // Pakai cached identity — tidak buat object baru tiap publish
+            val serial    = cachedSerial ?: run {
+                Log.e(TAG, "Serial number missing")
+                return@launch
+            }
+            val androidId = cachedAndroidId ?: run {
+                Log.e(TAG, "Android ID missing")
                 return@launch
             }
 
-            val serialNumber = identity.serial
-            val androidId    = identity.androidId
-
             val nowMs = System.currentTimeMillis()
+            val hr    = app.currentHeartRate
+            val hrTs  = app.currentHeartRateTs.takeIf { it > 0 } ?: nowMs
 
-            // Baca HR dari App-level state (diisi oleh PersonelViewModel via BLE)
-//            val app          = application as? com.example.personeltracking2026.App
-            val hr           = app?.currentHeartRate   ?: 0
-            val hrTs         = app?.currentHeartRateTs?.takeIf { it > 0 } ?: nowMs
             val payload = MqttPayloadBuilder.buildRadioDataPayload(
                 session      = sessionManager,
-                serialNumber = serialNumber,
+                serialNumber = serial,
                 androidId    = androidId,
                 lat          = lat,
                 lon          = lon,
@@ -270,7 +275,7 @@ class MqttLocationService : Service() {
                 heartrateTs  = hrTs,
                 batteryLevel = getBatteryLevel(),
                 appVersion   = BuildConfig.APP_VERSION,
-                rtmpUrl      = StreamUtils.getRtmpUrl(serialNumber)
+                rtmpUrl      = StreamUtils.getRtmpUrl(serial)
             )
 
             mqttManager.publishRadioData(payload)
@@ -312,8 +317,8 @@ class MqttLocationService : Service() {
                 description = "Tracking Location Personel Active"
                 setShowBadge(false)
             }
-            val nm = getSystemService(NotificationManager::class.java)
-            nm.createNotificationChannel(channel)
+            getSystemService(NotificationManager::class.java)
+                .createNotificationChannel(channel)
         }
     }
 

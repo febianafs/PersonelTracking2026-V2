@@ -1,27 +1,25 @@
 package com.example.personeltracking2026.data.repository
 
-import android.content.Context
-import com.example.personeltracking2026.core.location.AppLocationManager
 import com.example.personeltracking2026.data.model.LocationData
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlin.Result
 
-class LocationRepository(private val context: Context) {
+// Ganti LocationRepository jadi passive — terima data dari luar
+class LocationRepository {
 
-    fun getLocationFlow(intervalMs: Long = 5000L): Flow<kotlin.Result<LocationData>> = callbackFlow {
-        val manager = AppLocationManager(context)
-        manager.setInterval(intervalMs)
+    private val _locationFlow = MutableSharedFlow<Result<LocationData>>(
+        replay = 1,
+        extraBufferCapacity = 10
+    )
+    val locationFlow: SharedFlow<Result<LocationData>> = _locationFlow.asSharedFlow()
 
-        manager.onLocationUpdate = { lat, lon, accuracy, source ->
-            trySend(kotlin.Result.success(LocationData(lat, lon, accuracy, source)))
-        }
-        manager.onLocationError = { message ->
-            trySend(kotlin.Result.failure(Exception(message)))
-        }
+    suspend fun emit(data: LocationData) {
+        _locationFlow.emit(Result.success(data))
+    }
 
-        manager.startUpdates()
-
-        awaitClose { manager.stopUpdates() }
+    suspend fun emitError(message: String) {
+        _locationFlow.emit(Result.failure(Exception(message)))
     }
 }

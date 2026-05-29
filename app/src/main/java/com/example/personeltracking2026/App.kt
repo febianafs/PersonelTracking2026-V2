@@ -3,6 +3,7 @@ package com.example.personeltracking2026
 import android.app.Application
 import android.util.Log
 import com.example.personeltracking2026.core.mqtt.MqttManager
+import com.example.personeltracking2026.data.repository.LocationRepository
 import com.example.personeltracking2026.ui.bluetooth.BluetoothLeService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,16 +16,16 @@ class App : Application() {
 
     lateinit var mqttManager: MqttManager
 
+    // ── Singleton LocationRepository ────────────────────────────────
+    val locationRepository: LocationRepository by lazy { LocationRepository() }
+
     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    // ── Heart Rate global state ─────────────────────────────────────
-    // Diupdate oleh PersonelViewModel/BluetoothViewModel saat data BLE masuk.
-    // Dibaca oleh MqttLocationService saat build payload.
     @Volatile var currentHeartRate   : Int  = 0
     @Volatile var currentHeartRateTs : Long = 0L
-    @Volatile var currentLat: Double = 0.0
-    @Volatile var currentLon: Double = 0.0
-    @Volatile var currentAccuracy: Float = 999f
+    @Volatile var currentLat         : Double = 0.0
+    @Volatile var currentLon         : Double = 0.0
+    @Volatile var currentAccuracy    : Float  = 999f
 
     @Volatile
     var currentMode: DeviceMode = DeviceMode.NONE
@@ -36,16 +37,12 @@ class App : Application() {
         // GLOBAL BLE COLLECTOR
         appScope.launch {
             BluetoothLeService.bpmValue.collectLatest { bpm ->
-
-                currentHeartRate = bpm
+                currentHeartRate   = bpm
                 currentHeartRateTs = System.currentTimeMillis()
-
                 Log.d("GLOBAL_HR", "HR = $bpm")
             }
         }
 
-        // TAMBAH INI — init SosManager di level App
-        // Sehingga SOS bisa diaktifkan dari Activity manapun (termasuk Settings)
         val session       = com.example.personeltracking2026.core.session.SessionManager(this)
         val deviceManager = com.example.personeltracking2026.utils.DeviceIdentityManager(this)
         val identity      = deviceManager.getIdentity()
