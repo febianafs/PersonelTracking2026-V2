@@ -83,28 +83,41 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private suspend fun validateToken(): Class<*> {
-        val token = sessionManager.getToken() ?: return LoginActivity::class.java
+        val token = sessionManager.getToken()
+            ?: return LoginActivity::class.java
 
         return when (val result = authRepository.checkToken(token)) {
-            is Result.Success -> {
+            is Result.Success -> getDestinationFromSession()
 
-                val lastScreen = sessionManager.getLastScreen()
+            is Result.Error -> {
+                when (result.message) {
+                    "TOKEN_EXPIRED",
+                    "TOKEN_FORBIDDEN" -> LoginActivity::class.java
 
-                if (lastScreen != null) {
-                    when (lastScreen) {
-                        LastScreen.PERSONEL -> PersonelActivity::class.java
-                        LastScreen.BODYCAM  -> BodycamActivity::class.java
-                    }
-                } else {
-                    // fallback kalau belum ada last screen
-                    when (sessionManager.getRole()) {
-                        SessionManager.ROLE_PERSONEL -> PersonelActivity::class.java
-                        SessionManager.ROLE_BODYCAM  -> BodycamActivity::class.java
-                        else                         -> MainActivity::class.java
-                    }
+                    "NETWORK_ERROR" -> getDestinationFromSession()
+
+                    else -> getDestinationFromSession()
                 }
             }
-            else -> LoginActivity::class.java
+
+            is Result.Loading -> getDestinationFromSession()
+        }
+    }
+
+    private fun getDestinationFromSession(): Class<*> {
+        val lastScreen = sessionManager.getLastScreen()
+
+        return if (lastScreen != null) {
+            when (lastScreen) {
+                LastScreen.PERSONEL -> PersonelActivity::class.java
+                LastScreen.BODYCAM -> BodycamActivity::class.java
+            }
+        } else {
+            when (sessionManager.getRole()) {
+                SessionManager.ROLE_PERSONEL -> PersonelActivity::class.java
+                SessionManager.ROLE_BODYCAM -> BodycamActivity::class.java
+                else -> MainActivity::class.java
+            }
         }
     }
 
