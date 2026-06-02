@@ -75,7 +75,10 @@ data class BodycamDataPayload(
     @SerializedName("timestamp")     val timestamp: Long,
     @SerializedName("serial_number") val serialNumber: String,
     @SerializedName("android_id")    val androidId: String,
-    @SerializedName("stream_url")    val streamUrl: String
+    @SerializedName("id")            val id: String,
+    @SerializedName("name")          val name: String,
+    @SerializedName("stream")        val stream: Int,
+    @SerializedName("rtmp_url")      val streamUrl: String
 )
 
 // ─── TOPIC: bodycam/sos ────────────────────────────────────────────────────────
@@ -84,5 +87,11 @@ data class BodycamSosPayload(
     @SerializedName("timestamp")     val timestamp: Long,
     @SerializedName("serial_number") val serialNumber: String,
     @SerializedName("android_id")    val androidId: String,
+    @SerializedName("id")            val id: String,
+    @SerializedName("name")          val name: String,
+    @SerializedName("avatar")        val avatarUrl: String,
     @SerializedName("sos")           val sos: Int,
+    @SerializedName("latitude")      val latitude: Double,
+    @SerializedName("longitude")     val longitude: Double,
+    @SerializedName("accuracy")      val accuracy: Float
 )

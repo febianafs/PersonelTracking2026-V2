@@ -24,26 +24,26 @@ class MqttTopicManager(context: Context) {
             personelDataTopic =
                 prefs.getString(
                     "personel_data",
-                    "tjw/radio/data"
-                ) ?: "tjw/radio/data",
+                    "kdu/radio/data"
+                ) ?: "kdu/radio/data",
 
             personelSosTopic =
                 prefs.getString(
                     "personel_sos",
-                    "tjw/radio/sos"
-                ) ?: "tjw/radio/sos",
+                    "kdu/radio/sos"
+                ) ?: "kdu/radio/sos",
 
             bodycamDataTopic =
                 prefs.getString(
                     "bodycam_data",
-                    "tjw/bodycam/data"
-                ) ?: "tjw/bodycam/data",
+                    "kdu/bodycam/data"
+                ) ?: "kdu/bodycam/data",
 
             bodycamSosTopic =
                 prefs.getString(
                     "bodycam_sos",
-                    "tjw/bodycam/sos"
-                ) ?: "tjw/bodycam/sos"
+                    "kdu/bodycam/sos"
+                ) ?: "kdu/bodycam/sos"
         )
     }
 }

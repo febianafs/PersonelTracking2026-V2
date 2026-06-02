@@ -238,8 +238,11 @@ class MqttLocationService : Service() {
         serviceScope.launch {
             val app = application as App
 
-            if (app.currentMode != DeviceMode.RADIO) {
-                Log.d(TAG, "Not RADIO mode → skip publish")
+            if (
+                app.currentMode != DeviceMode.RADIO &&
+                app.currentMode != DeviceMode.RADIO_BODYCAM
+            ) {
+                Log.d(TAG, "Not RADIO/RADIO_BODYCAM mode → skip publish")
                 return@launch
             }
 

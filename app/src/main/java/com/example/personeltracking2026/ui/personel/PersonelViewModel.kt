@@ -197,7 +197,7 @@ class PersonelViewModel(
     private fun resolveCmsImageUrl(path: String?): String? {
         if (path.isNullOrBlank()) return null
         return if (path.startsWith("http://") || path.startsWith("https://")) path
-        else "https://cms.aturwalpat.com/images/${path.trimStart('/')}"
+        else "https://cms.kodauemws.com/images/${path.trimStart('/')}"
     }
 
     // ─── LOCATION (UI only — MQTT publish dilakukan oleh MqttLocationService) ─

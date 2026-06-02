@@ -105,65 +105,12 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="2">
+                    android:orientation="vertical">
 
-                    <!-- PERSONEL -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/cardPersonel"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="8dp"
-                        app:cardCornerRadius="14dp"
-                        app:strokeWidth="2dp"
-                        app:strokeColor="@color/gray"
-                        app:cardBackgroundColor="@color/background"
-                        app:cardElevation="4dp">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:gravity="center"
-                            android:orientation="vertical"
-                            android:paddingVertical="24dp"
-                            android:paddingHorizontal="12dp">
-
-                            <ImageView
-                                android:layout_width="36dp"
-                                android:layout_height="36dp"
-                                android:src="@drawable/ic_person"
-                                app:tint="@color/white" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="HT"
-                                android:textStyle="bold"
-                                android:textColor="@color/white"
-                                android:textSize="14sp"
-                                android:layout_marginTop="10dp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="HT Access"
-                                android:textColor="@color/gray"
-                                android:textSize="11sp"
-                                android:gravity="center"
-                                android:layout_marginTop="4dp" />
-
-                        </LinearLayout>
-
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <!-- BODYCAM -->
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cardBodycam"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="8dp"
                         app:cardCornerRadius="14dp"
                         app:strokeWidth="2dp"
                         app:strokeColor="@color/gray"
@@ -175,28 +122,28 @@
                             android:layout_height="match_parent"
                             android:gravity="center"
                             android:orientation="vertical"
-                            android:paddingVertical="24dp"
+                            android:paddingVertical="28dp"
                             android:paddingHorizontal="12dp">
 
                             <ImageView
-                                android:layout_width="36dp"
-                                android:layout_height="36dp"
+                                android:layout_width="42dp"
+                                android:layout_height="42dp"
                                 android:src="@drawable/ic_bodycam"
                                 app:tint="@color/white" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Bodycam"
+                                android:text="RADIO BODYCAM"
                                 android:textStyle="bold"
                                 android:textColor="@color/white"
-                                android:textSize="14sp"
+                                android:textSize="16sp"
                                 android:layout_marginTop="10dp" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Bodycam Access"
+                                android:text="Tracking, streaming, and radio payload"
                                 android:textColor="@color/gray"
                                 android:textSize="11sp"
                                 android:gravity="center"

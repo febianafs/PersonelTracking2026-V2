@@ -64,8 +64,12 @@ object SosManager {
 
             DeviceType.BODYCAM -> {
                 val payload = MqttPayloadBuilder.buildBodycamSosPayload(
+                    session      = session,
                     serialNumber = serialNumber,
                     androidId    = androidId,
+                    lat          = lat,
+                    lon          = lon,
+                    acc          = accuracy,
                     sos          = sosValue
                 )
                 mqtt.publishBodycamSos(payload)

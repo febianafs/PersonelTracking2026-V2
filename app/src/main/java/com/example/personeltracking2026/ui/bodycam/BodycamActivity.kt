@@ -160,6 +160,7 @@ class BodycamActivity : BaseActivity(), ConnectChecker {
         sessionManager = SessionManager(this)
 
         val app = application as App
+        app.currentMode = DeviceMode.RADIO_BODYCAM
         SosManager.init(
             mqtt             = app.mqttManager,
             session          = sessionManager,
@@ -224,7 +225,7 @@ class BodycamActivity : BaseActivity(), ConnectChecker {
         }
 
         val app = application as App
-        app.currentMode = DeviceMode.BODYCAM
+        app.currentMode = DeviceMode.RADIO_BODYCAM
         val identity = DeviceIdentityManager(this).getIdentity() ?: return
 
         SosManager.init(
@@ -575,7 +576,7 @@ class BodycamActivity : BaseActivity(), ConnectChecker {
                 startRtmpStream()
 
                 hasPublishedStreamStart = true
-                publishBodycamStream()
+                publishBodycamStream(1)
 
                 binding.layoutIdle?.visibility = View.GONE
                 binding.layoutEnded?.visibility = View.GONE
@@ -586,6 +587,10 @@ class BodycamActivity : BaseActivity(), ConnectChecker {
             }
             is StreamState.Ended -> {
                 stopRtmpStream()
+
+                if (hasPublishedStreamStart) {
+                    publishBodycamStream(0)
+                }
 
                 stopCameraPreview()
                 hasPublishedStreamStart = false
@@ -620,7 +625,7 @@ class BodycamActivity : BaseActivity(), ConnectChecker {
                 when (item.itemId) {
                     R.id.action_ht -> {
 
-                        (application as App).currentMode = DeviceMode.RADIO
+                        (application as App).currentMode = DeviceMode.RADIO_BODYCAM
 
                         val intent = Intent(this@BodycamActivity, com.example.personeltracking2026.ui.personel.PersonelActivity::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -769,7 +774,7 @@ class BodycamActivity : BaseActivity(), ConnectChecker {
     //  PUBLISH DATA PAYLOAD
     // ─────────────────────────────────────────────
 
-    private fun publishBodycamStream() {
+    private fun publishBodycamStream(stream: Int) {
         val app = application as App
         val identity = DeviceIdentityManager(this).getIdentity() ?: return
 
@@ -778,10 +783,13 @@ class BodycamActivity : BaseActivity(), ConnectChecker {
         val streamUrl = StreamUtils.getRtmpUrl(serial)
 
         val payload = MqttPayloadBuilder.buildBodycamDataPayload(
+            session = sessionManager,
             serialNumber = serial,
             androidId = androidId,
-            streamUrl = streamUrl
+            streamUrl = streamUrl,
+            stream = stream
         )
+
         app.mqttManager.publishBodycamData(payload)
     }
 

@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 object UpdaterRetrofitClient {
 
     private const val BASE_URL =
-        "http://202.10.40.148:8081/"
+        "http://76.13.20.253:8081/"
 
     private val loggingInterceptor =
         HttpLoggingInterceptor().apply {

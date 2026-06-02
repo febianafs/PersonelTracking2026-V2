@@ -1,180 +1,208 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardMqtt"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    app:cardCornerRadius="16dp"
+    app:cardElevation="6dp"
+    app:cardBackgroundColor="@color/background">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="12dp">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardMqtt"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="6dp"
-            app:cardBackgroundColor="@color/background"
-            tools:ignore="MissingConstraints">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
 
-            <!-- GANTI wrap_content → match_parent -->
+            <!-- MQTT CONNECTION -->
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#151E27"
+                android:gravity="center"
                 android:orientation="vertical"
                 android:padding="12dp">
 
-                <!-- BERI weight="1" supaya konten atas mengisi sisa ruang -->
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1">
-
-                    <TextView
-                        android:id="@+id/mqttTitle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="MQTT Connection"
-                        android:textColor="#4FC3F7"
-                        android:textSize="13sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <!-- SERVER HOST -->
-                    <TextView
-                        android:id="@+id/ipTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Server Host"
-                        android:textColor="#A2A2A2"
-                        android:textSize="10sp"
-                        android:layout_marginTop="5dp"
-                        app:layout_constraintTop_toBottomOf="@+id/mqttTitle"
-                        app:layout_constraintStart_toStartOf="parent"/>
-
-                    <TextView
-                        android:id="@+id/tvHostIp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="192.168.0.0"
-                        android:textColor="#FFFFFF"
-                        android:textSize="11sp"
-                        app:layout_constraintTop_toBottomOf="@+id/ipTitle"
-                        app:layout_constraintStart_toStartOf="parent"/>
-
-                    <!-- PORT -->
-                    <TextView
-                        android:id="@+id/portTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Port"
-                        android:textColor="#A2A2A2"
-                        android:textSize="10sp"
-                        android:layout_marginTop="5dp"
-                        app:layout_constraintTop_toBottomOf="@+id/tvHostIp"
-                        app:layout_constraintStart_toStartOf="parent"/>
-
-                    <TextView
-                        android:id="@+id/tvPort"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="1883"
-                        android:textColor="#FFFFFF"
-                        android:textSize="11sp"
-                        app:layout_constraintTop_toBottomOf="@+id/portTitle"
-                        app:layout_constraintStart_toStartOf="parent"/>
-
-                    <!-- SEND INTERVAL -->
-                    <TextView
-                        android:id="@+id/sendInterval"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Send Interval"
-                        android:textColor="#A2A2A2"
-                        android:textSize="10sp"
-                        android:layout_marginTop="5dp"
-                        app:layout_constraintTop_toBottomOf="@+id/tvPort"
-                        app:layout_constraintStart_toStartOf="parent"/>
-
-                    <TextView
-                        android:id="@+id/tvInterval"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="5 second"
-                        android:textColor="#FFFFFF"
-                        android:textSize="11sp"
-                        app:layout_constraintTop_toBottomOf="@+id/sendInterval"
-                        app:layout_constraintStart_toStartOf="parent"/>
-
-                    <!-- SETTINGS BUTTON pojok kanan bawah -->
-                    <TextView
-                        android:id="@+id/mqttSettingBtn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Settings ›"
-                        android:textColor="#4FC3F7"
-                        android:textSize="13sp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <!-- DIVIDER -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#1A3A5C"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"/>
-
-                <!-- LAST SYNC ROW — sekarang selalu terlihat di bawah -->
-                <LinearLayout
+                <TextView
+                    android:id="@+id/mqttTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
+                    android:gravity="center"
+                    android:text="MQTT Connection"
+                    android:textColor="#4FC3F7"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-                    <ImageView
-                        android:id="@+id/iconSync"
-                        android:layout_width="12dp"
-                        android:layout_height="12dp"
-                        android:src="@drawable/ic_sync"
-                        app:tint="#90CAF9"
-                        android:layout_marginEnd="6dp"/>
+                <TextView
+                    android:id="@+id/ipTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:text="Server Host"
+                    android:textColor="#A2A2A2"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Last sync"
-                        android:textColor="#90CAF9"
-                        android:textSize="11sp"/>
+                <TextView
+                    android:id="@+id/tvHostIp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="192.168.1.100"
+                    android:textColor="#EAF2FF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/tvLastSync"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2 seconds ago"
-                        android:textColor="#69F0AE"
-                        android:textStyle="bold"
-                        android:textSize="11sp"
-                        android:layout_marginStart="6dp"/>
+                <TextView
+                    android:id="@+id/portTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:text="Port"
+                    android:textColor="#A2A2A2"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
 
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="1dp"
-                        android:layout_weight="1"/>
+                <TextView
+                    android:id="@+id/tvPort"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="1883"
+                    android:textColor="#EAF2FF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
-                    <View
-                        android:id="@+id/dotLastSync"
-                        android:layout_width="8dp"
-                        android:layout_height="8dp"
-                        android:background="@drawable/bg_dot_connected"/>
-
-                </LinearLayout>
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
-    </FrameLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- DATA INTERVAL -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:background="#151E27"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <TextView
+                    android:id="@+id/sendInterval"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Data Interval"
+                    android:textColor="#4FC3F7"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:text="Send Interval"
+                    android:textColor="#A2A2A2"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvInterval"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="5 second"
+                    android:textColor="#EAF2FF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/mqttSettingBtn"
+            android:layout_width="87dp"
+            android:layout_height="42dp"
+            android:layout_gravity="end"
+            android:layout_marginTop="8dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="Settings  >"
+            android:textColor="#4FC3F7"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="6dp"
+            android:background="#1A3A5C" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/iconSync"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginEnd="6dp"
+                android:src="@drawable/ic_sync"
+                app:tint="#90CAF9" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Last sync"
+                android:textColor="#90CAF9"
+                android:textSize="11sp" />
+
+            <TextView
+                android:id="@+id/tvLastSync"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="2 seconds ago"
+                android:textColor="#69F0AE"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <View
+                android:id="@+id/dotLastSync"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:background="@drawable/bg_dot_connected" />
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

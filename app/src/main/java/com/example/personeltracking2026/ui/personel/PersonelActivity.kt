@@ -77,7 +77,7 @@ class PersonelActivity : BaseActivity() {
     private lateinit var binding: ActivityPersonelBinding
     private lateinit var mqttPrefs: SharedPreferences
     private lateinit var sessionManager: SessionManager
-    private lateinit var mapView: MapView
+//    private lateinit var mapView: MapView
     private lateinit var pagerAdapter: TopPagerAdapter
     private lateinit var reconnectManager: MqttReconnectManager
 
@@ -182,7 +182,7 @@ class PersonelActivity : BaseActivity() {
 
         currentMapType = newType
 
-        setupMap()
+//        setupMap()
 
         val deviceManager = DeviceIdentityManager(this)
         val identity = deviceManager.getIdentity()
@@ -193,7 +193,7 @@ class PersonelActivity : BaseActivity() {
 
         val app = application as App
 
-        app.currentMode = DeviceMode.RADIO
+        app.currentMode = DeviceMode.RADIO_BODYCAM
 
         // FIX: SosManager di-init ulang di sini dengan locationProvider
         // yang membaca koordinat dari App level (bukan hanya dari PersonelActivity)
@@ -208,17 +208,17 @@ class PersonelActivity : BaseActivity() {
             locationProvider = { Triple(app.currentLat, app.currentLon, app.currentAccuracy) }
         )
 
-        binding.btnZoomIn.setOnClickListener {
-            mapLibreMap?.animateCamera(
-                org.maplibre.android.camera.CameraUpdateFactory.zoomIn()
-            )
-        }
+//        binding.btnZoomIn.setOnClickListener {
+//            mapLibreMap?.animateCamera(
+//                org.maplibre.android.camera.CameraUpdateFactory.zoomIn()
+//            )
+//        }
 
-        binding.btnZoomOut.setOnClickListener {
-            mapLibreMap?.animateCamera(
-                org.maplibre.android.camera.CameraUpdateFactory.zoomOut()
-            )
-        }
+//        binding.btnZoomOut.setOnClickListener {
+//            mapLibreMap?.animateCamera(
+//                org.maplibre.android.camera.CameraUpdateFactory.zoomOut()
+//            )
+//        }
 
         setupVitalSignsInitial()
         updateMqttUI()
@@ -233,7 +233,7 @@ class PersonelActivity : BaseActivity() {
         super.onStart()
 
         viewModel.registerBatteryReceiver(this)
-        binding.mapView.onStart()
+//        binding.mapView.onStart()
         updateMqttUI()
 
         val granted = ContextCompat.checkSelfPermission(
@@ -258,14 +258,14 @@ class PersonelActivity : BaseActivity() {
         reconnectManager.stop()
 
         viewModel.unregisterBatteryReceiver(this)
-        binding.mapView.onStop()
+//        binding.mapView.onStop()
     }
 
     override fun onResume() {
         super.onResume()
-        (application as App).currentMode = DeviceMode.RADIO
+        (application as App).currentMode = DeviceMode.RADIO_BODYCAM
         SessionManager(this).saveLastScreen(LastScreen.PERSONEL)
-        binding.mapView.onResume()
+//        binding.mapView.onResume()
         val savedType = getSharedPreferences("map_settings", MODE_PRIVATE)
             .getString("map_type", MapTypeManager.MapType.STANDARD.name)
 
@@ -275,7 +275,7 @@ class PersonelActivity : BaseActivity() {
 
         if (newType != currentMapType) {
             currentMapType = newType
-            applyMapType(newType)
+//            applyMapType(newType)
         }
 
         val app = application as App
@@ -293,18 +293,18 @@ class PersonelActivity : BaseActivity() {
 
     override fun onPause() {
         super.onPause()
-        binding.mapView.onPause()
+//        binding.mapView.onPause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         markerBlinkJob?.cancel()
-        binding.mapView.onDestroy()
+//        binding.mapView.onDestroy()
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        binding.mapView.onLowMemory()
+//        binding.mapView.onLowMemory()
     }
 
     // ─── OBSERVERS ───────────────────────────────────────────────────────────
@@ -349,7 +349,7 @@ class PersonelActivity : BaseActivity() {
                         }
 
                         state.data?.let {
-                            updateCoordinates(it.lat, it.lon)
+//                            updateCoordinates(it.lat, it.lon)
 
                             // FIX: Update koordinat ke App level
                             // agar SosManager bisa baca koordinat terbaru
@@ -360,7 +360,7 @@ class PersonelActivity : BaseActivity() {
                             app.currentAccuracy = it.accuracy
 
                             if (!SosManager.isActive.value) {
-                                updateMarker(it.lat, it.lon)
+//                                updateMarker(it.lat, it.lon)
                             }
                             pagerAdapter.latitude = it.lat
                             pagerAdapter.longitude = it.lon
@@ -509,7 +509,7 @@ class PersonelActivity : BaseActivity() {
         return if (path.startsWith("http://") || path.startsWith("https://")) {
             path
         } else {
-            "https://cms.aturwalpat.com/images/${path.trimStart('/')}"
+            "https://cms.kodauemws.com/images/${path.trimStart('/')}"
         }
     }
 
@@ -609,71 +609,71 @@ class PersonelActivity : BaseActivity() {
 
     // ─── MAP ─────────────────────────────────────────────────────────────────
 
-    private fun setupMap() {
-        mapView = binding.mapView
-        mapView.onCreate(null)
+//    private fun setupMap() {
+//        mapView = binding.mapView
+//        mapView.onCreate(null)
+//
+//        mapView.getMapAsync { map ->
+//            mapLibreMap = map
+//
+//            val styleUrl = MapTypeManager.getStyleUrl(currentMapType)
+//            map.setStyle(
+//                Style.Builder().fromUri(styleUrl)
+//            ) {
+//                val point = LatLng(currentLat, currentLon)
+//
+//                map.cameraPosition = CameraPosition.Builder()
+//                    .target(point)
+//                    .zoom(15.0)
+//                    .build()
+//
+//                val style = it
+//
+//                geoJsonSource = GeoJsonSource(
+//                    "personel-source",
+//                    Point.fromLngLat(currentLon, currentLat)
+//                )
+//                style.addSource(geoJsonSource!!)
+//
+//                val drawableRed = ContextCompat.getDrawable(this, R.drawable.ic_location_pin)!!
+//                drawableRed.setTint(Color.parseColor("#FF1744"))
+//                val bitmapRed = drawableToBitmap(drawableRed)
+//
+//                style.addImage("marker-red", bitmapRed)
+//
+//                val drawablePink = ContextCompat.getDrawable(this, R.drawable.ic_location_pin)!!
+//                drawablePink.setTint(Color.parseColor("#FF8A80"))
+//                val bitmapPink = drawableToBitmap(drawablePink)
+//
+//                style.addImage("marker-pink", bitmapPink)
+//
+//                val symbolLayer = SymbolLayer("personel-layer", "personel-source")
+//                    .withProperties(
+//                        iconImage("marker-red"),
+//                        iconAllowOverlap(true),
+//                        iconIgnorePlacement(true)
+//                    )
+//                style.addLayer(symbolLayer)
+//            }
+//        }
+//        Log.d("INIT", "MAP READY")
+//    }
 
-        mapView.getMapAsync { map ->
-            mapLibreMap = map
-
-            val styleUrl = MapTypeManager.getStyleUrl(currentMapType)
-            map.setStyle(
-                Style.Builder().fromUri(styleUrl)
-            ) {
-                val point = LatLng(currentLat, currentLon)
-
-                map.cameraPosition = CameraPosition.Builder()
-                    .target(point)
-                    .zoom(15.0)
-                    .build()
-
-                val style = it
-
-                geoJsonSource = GeoJsonSource(
-                    "personel-source",
-                    Point.fromLngLat(currentLon, currentLat)
-                )
-                style.addSource(geoJsonSource!!)
-
-                val drawableRed = ContextCompat.getDrawable(this, R.drawable.ic_location_pin)!!
-                drawableRed.setTint(Color.parseColor("#FF1744"))
-                val bitmapRed = drawableToBitmap(drawableRed)
-
-                style.addImage("marker-red", bitmapRed)
-
-                val drawablePink = ContextCompat.getDrawable(this, R.drawable.ic_location_pin)!!
-                drawablePink.setTint(Color.parseColor("#FF8A80"))
-                val bitmapPink = drawableToBitmap(drawablePink)
-
-                style.addImage("marker-pink", bitmapPink)
-
-                val symbolLayer = SymbolLayer("personel-layer", "personel-source")
-                    .withProperties(
-                        iconImage("marker-red"),
-                        iconAllowOverlap(true),
-                        iconIgnorePlacement(true)
-                    )
-                style.addLayer(symbolLayer)
-            }
-        }
-        Log.d("INIT", "MAP READY")
-    }
-
-    private fun updateMarker(lat: Double, lon: Double) {
-        geoJsonSource?.setGeoJson(
-            Point.fromLngLat(lon, lat)
-        )
-
-        val newLoc = LocationData(lat, lon, 0f, "")
-        val last = lastAccepted
-
-        if (last == null || distance(last, newLoc) > 5) {
-            mapLibreMap?.moveCamera(
-                CameraUpdateFactory.newLatLng(LatLng(lat, lon))
-            )
-            lastAccepted = newLoc
-        }
-    }
+//    private fun updateMarker(lat: Double, lon: Double) {
+//        geoJsonSource?.setGeoJson(
+//            Point.fromLngLat(lon, lat)
+//        )
+//
+//        val newLoc = LocationData(lat, lon, 0f, "")
+//        val last = lastAccepted
+//
+//        if (last == null || distance(last, newLoc) > 5) {
+//            mapLibreMap?.moveCamera(
+//                CameraUpdateFactory.newLatLng(LatLng(lat, lon))
+//            )
+//            lastAccepted = newLoc
+//        }
+//    }
 
     private fun updateMarkerWithColor(useRed: Boolean) {
         val layer = mapLibreMap?.style?.getLayer("personel-layer") as? SymbolLayer
@@ -683,50 +683,50 @@ class PersonelActivity : BaseActivity() {
         )
     }
 
-    private fun updateCoordinates(lat: Double, lon: Double) {
-        currentLat = lat
-        currentLon = lon
+//    private fun updateCoordinates(lat: Double, lon: Double) {
+//        currentLat = lat
+//        currentLon = lon
+//
+//        binding.tvCoordinates.text  = "$lat,"
+//        binding.tvCoordinates2.text = " $lon"
+//    }
 
-        binding.tvCoordinates.text  = "$lat,"
-        binding.tvCoordinates2.text = " $lon"
-    }
-
-    private fun applyMapType(type: MapTypeManager.MapType) {
-        val map = mapLibreMap ?: return
-
-        val currentCamera = map.cameraPosition
-        val styleUrl = MapTypeManager.getStyleUrl(type)
-
-        map.setStyle(
-            Style.Builder().fromUri(styleUrl)
-        ) { style ->
-
-            map.cameraPosition = currentCamera
-
-            geoJsonSource = GeoJsonSource(
-                "personel-source",
-                Point.fromLngLat(currentLon, currentLat)
-            )
-            style.addSource(geoJsonSource!!)
-
-            val drawableRed = ContextCompat.getDrawable(this, R.drawable.ic_location_pin)!!
-            drawableRed.setTint(Color.parseColor("#FF1744"))
-            style.addImage("marker-red", drawableToBitmap(drawableRed))
-
-            val drawablePink = ContextCompat.getDrawable(this, R.drawable.ic_location_pin)!!
-            drawablePink.setTint(Color.parseColor("#FF8A80"))
-            style.addImage("marker-pink", drawableToBitmap(drawablePink))
-
-            val symbolLayer = SymbolLayer("personel-layer", "personel-source")
-                .withProperties(
-                    iconImage("marker-red"),
-                    iconAllowOverlap(true),
-                    iconIgnorePlacement(true)
-                )
-
-            style.addLayer(symbolLayer)
-        }
-    }
+//    private fun applyMapType(type: MapTypeManager.MapType) {
+//        val map = mapLibreMap ?: return
+//
+//        val currentCamera = map.cameraPosition
+//        val styleUrl = MapTypeManager.getStyleUrl(type)
+//
+//        map.setStyle(
+//            Style.Builder().fromUri(styleUrl)
+//        ) { style ->
+//
+//            map.cameraPosition = currentCamera
+//
+//            geoJsonSource = GeoJsonSource(
+//                "personel-source",
+//                Point.fromLngLat(currentLon, currentLat)
+//            )
+//            style.addSource(geoJsonSource!!)
+//
+//            val drawableRed = ContextCompat.getDrawable(this, R.drawable.ic_location_pin)!!
+//            drawableRed.setTint(Color.parseColor("#FF1744"))
+//            style.addImage("marker-red", drawableToBitmap(drawableRed))
+//
+//            val drawablePink = ContextCompat.getDrawable(this, R.drawable.ic_location_pin)!!
+//            drawablePink.setTint(Color.parseColor("#FF8A80"))
+//            style.addImage("marker-pink", drawableToBitmap(drawablePink))
+//
+//            val symbolLayer = SymbolLayer("personel-layer", "personel-source")
+//                .withProperties(
+//                    iconImage("marker-red"),
+//                    iconAllowOverlap(true),
+//                    iconIgnorePlacement(true)
+//                )
+//
+//            style.addLayer(symbolLayer)
+//        }
+//    }
 
     // ─── LOCATION ────────────────────────────────────────────────────────────
 
@@ -805,14 +805,14 @@ class PersonelActivity : BaseActivity() {
 
     private fun setupClickListeners() {
 
-        binding.btnFullMap.setOnClickListener {
-            val intent = Intent(this, FullscreenMapActivity::class.java)
-            intent.putExtra("lat", currentLat)
-            intent.putExtra("lon", currentLon)
-            intent.putExtra("mapType", currentMapType.name)
-
-            startActivity(intent)
-        }
+//        binding.btnFullMap.setOnClickListener {
+//            val intent = Intent(this, FullscreenMapActivity::class.java)
+//            intent.putExtra("lat", currentLat)
+//            intent.putExtra("lon", currentLon)
+//            intent.putExtra("mapType", currentMapType.name)
+//
+//            startActivity(intent)
+//        }
     }
 
     // ─── SWIPE REFRESH ───────────────────────────────────────────────────────

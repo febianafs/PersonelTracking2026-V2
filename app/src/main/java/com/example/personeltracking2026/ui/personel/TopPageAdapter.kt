@@ -106,7 +106,7 @@ class TopPagerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val tvBattery  = itemView.findViewById<TextView?>(R.id.tvBattery)
         private val tvLastSync = itemView.findViewById<TextView?>(R.id.tvLastSync)
         private val dot        = itemView.findViewById<View>(R.id.dotLastSync)
-        private val btnFullData = itemView.findViewById<TextView>(R.id.btnDataSelengkapnya)
+//        private val btnFullData = itemView.findViewById<TextView>(R.id.btnDataSelengkapnya)
 
         fun bind(
             name: String,
@@ -151,7 +151,7 @@ class TopPagerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             tvLastSync?.setTextColor(parsedColor)
             dot.backgroundTintList = android.content.res.ColorStateList.valueOf(parsedColor)
 
-            btnFullData.setOnClickListener { onFullDataClick?.invoke() }
+//            btnFullData.setOnClickListener { onFullDataClick?.invoke() }
         }
     }
     class VitalVH(itemView: View) : RecyclerView.ViewHolder(itemView) {

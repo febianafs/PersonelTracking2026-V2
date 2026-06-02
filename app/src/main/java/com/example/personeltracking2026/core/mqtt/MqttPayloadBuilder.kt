@@ -123,9 +123,11 @@ object MqttPayloadBuilder {
     }
 
     fun buildBodycamDataPayload(
+        session: SessionManager,
         serialNumber: String,
         androidId: String,
-        streamUrl: String
+        streamUrl: String,
+        stream: Int
     ): BodycamDataPayload {
         val nowSec = System.currentTimeMillis() / 1000
 
@@ -133,13 +135,20 @@ object MqttPayloadBuilder {
             timestamp    = nowSec,
             serialNumber = serialNumber,
             androidId    = androidId,
+            id           = session.getUserId()?.toString() ?: "",
+            name         = session.getName() ?: "",
+            stream       = stream,
             streamUrl    = streamUrl
         )
     }
 
     fun buildBodycamSosPayload(
+        session: SessionManager,
         serialNumber: String,
         androidId: String,
+        lat: Double,
+        lon: Double,
+        acc: Float,
         sos: Int
     ): BodycamSosPayload {
         val nowSec = System.currentTimeMillis() / 1000
@@ -148,7 +157,13 @@ object MqttPayloadBuilder {
             timestamp    = nowSec,
             serialNumber = serialNumber,
             androidId    = androidId,
-            sos          = sos
+            id           = session.getUserId()?.toString() ?: "",
+            name         = session.getName() ?: "",
+            avatarUrl    = session.getAvatarUrl() ?: "",
+            sos          = sos,
+            latitude     = lat,
+            longitude    = lon,
+            accuracy     = acc
         )
     }
 }

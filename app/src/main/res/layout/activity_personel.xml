@@ -20,280 +20,77 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
-        <!-- TOOLBAR -->
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="0dp"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/secondary"
-            app:contentInsetStart="0dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="16dp">
-
-<!--                <ImageView-->
-<!--                    android:layout_width="28dp"-->
-<!--                    android:layout_height="28dp"-->
-<!--                    android:src="@drawable/ic_logo_polri"-->
-<!--                    android:contentDescription="Logo"/>-->
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Personel Tracking"
-                    android:textColor="@color/primary"
-                    android:textStyle="bold"
-                    android:textSize="14sp"
-                    android:layout_marginStart="8dp"/>
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="12dp"
-                    android:layout_marginStart="12dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_toolbar_stripes"/>
-
-                <ImageButton
-                    android:id="@+id/btnOverflow"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_more_vert"
-                    android:contentDescription="More options"
-                    app:tint="@color/white"
-                    android:scaleType="centerInside"/>
-
-            </LinearLayout>
-        </com.google.android.material.appbar.MaterialToolbar>
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPagerTop"
-            android:layout_width="0dp"
-            android:layout_height="135dp"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="10dp"
-            app:layout_constraintTop_toBottomOf="@id/toolbar"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <me.relex.circleindicator.CircleIndicator3
-            android:id="@+id/indicator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            android:layout_marginBottom="1dp"
-            android:padding="4dp"
-            app:layout_constraintBottom_toTopOf="@+id/layoutMainRow"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/viewPagerTop" />
-
-        <!-- PETA -->
-        <LinearLayout
-            android:id="@+id/layoutMainRow"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/indicator">
-
-            <!-- KOLOM KIRI: VITAL SIGNS 40% -->
-
-
-            <!-- KOLOM KANAN: PETA 60% -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardMap"
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.6"
-                app:cardBackgroundColor="@color/background"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="6dp">
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/secondary"
+                app:contentInsetStart="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="12dp">
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp">
 
-                    <!-- TITLE + ZONE STATUS -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:layout_marginStart="8dp"
+                        android:text="Personel Tracking"
+                        android:textColor="@color/primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
 
-                        <ImageView
-                            android:layout_width="14dp"
-                            android:layout_height="14dp"
-                            android:layout_marginEnd="6dp"
-                            android:src="@drawable/ic_location_pin"
-                            app:tint="@color/primary" />
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="12dp"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_toolbar_stripes" />
 
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Position"
-                            android:textColor="@color/primary"
-                            android:textSize="11sp"
-                            android:textStyle="bold" />
-
-                        <!--                        <TextView-->
-                        <!--                            android:id="@+id/tvZoneStatus"-->
-                        <!--                            android:layout_width="wrap_content"-->
-                        <!--                            android:layout_height="wrap_content"-->
-                        <!--                            android:text="In Zone ✓"-->
-                        <!--                            android:textColor="#69F0AE"-->
-                        <!--                            android:textSize="10sp"-->
-                        <!--                            android:textStyle="bold"-->
-                        <!--                            android:layout_marginEnd="8dp"/>-->
-
-<!--                        &lt;!&ndash; ICON LAYERS — ganti tipe map &ndash;&gt;-->
-<!--                        <ImageButton-->
-<!--                            android:id="@+id/btnMapType"-->
-<!--                            android:layout_width="26dp"-->
-<!--                            android:layout_height="26dp"-->
-<!--                            android:background="@drawable/bg_card_selected"-->
-<!--                            android:contentDescription="Map Type"-->
-<!--                            android:padding="4dp"-->
-<!--                            android:scaleType="centerInside"-->
-<!--                            android:src="@drawable/ic_layers"-->
-<!--                            app:tint="@color/white" />-->
-<!--                        <ImageButton-->
-<!--                            android:id="@+id/btnMapType"-->
-<!--                            android:layout_width="26dp"-->
-<!--                            android:layout_height="26dp"-->
-<!--                            android:src="@drawable/ic_layers"-->
-<!--                            android:background="@drawable/bg_card_selected"-->
-<!--                            android:contentDescription="Map Type"-->
-<!--                            android:scaleType="centerInside"-->
-<!--                            android:padding="4dp"-->
-<!--                            app:tint="@color/white"/>-->
-                        <TextView
-                            android:id="@+id/btnFullMap"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="?attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:paddingVertical="8dp"
-                            android:paddingStart="16dp"
-                            android:text="Full map ›"
-                            android:textColor="@color/primary"
-                            android:textSize="10sp" />
-
-                    </LinearLayout>
-
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="110dp"
-                        android:layout_marginBottom="1dp">
-
-                        <!-- MAP VIEW -->
-                        <FrameLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-
-                            <org.maplibre.android.maps.MapView
-                                android:id="@+id/mapView"
-                                android:layout_width="match_parent"
-                                android:layout_height="86dp" />
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="end|center"
-                                android:layout_marginEnd="2dp"
-                                android:orientation="vertical">
-
-                                <ImageButton
-                                    android:id="@+id/btnZoomIn"
-                                    android:layout_width="20dp"
-                                    android:layout_height="20dp"
-                                    android:background="@android:color/white"
-                                    android:src="@drawable/ic_zoom_in"
-                                    app:tint="@android:color/black" />
-
-                                <ImageButton
-                                    android:id="@+id/btnZoomOut"
-                                    android:layout_width="20dp"
-                                    android:layout_height="20dp"
-                                    android:layout_marginTop="4dp"
-                                    android:background="@android:color/white"
-                                    android:src="@drawable/ic_zoom_out"
-                                    app:tint="@android:color/black" />
-
-                            </LinearLayout>
-
-                        </FrameLayout>
-
-                        <!-- KOORDINAT + VIEW FULL MAP -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:background="#0D2138"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:paddingHorizontal="8dp"
-                            android:paddingVertical="6dp">
-
-                            <ImageView
-                                android:layout_width="10dp"
-                                android:layout_height="10dp"
-                                android:layout_marginEnd="5dp"
-                                android:src="@drawable/ic_location_pin"
-                                app:tint="#90CAF9" />
-
-                            <TextView
-                                android:id="@+id/tvCoordinates"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="-7.868729,"
-                                android:textColor="#90CAF9"
-                                android:textSize="9sp"
-                                android:typeface="monospace" />
-
-                            <TextView
-                                android:id="@+id/tvCoordinates2"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="2dp"
-                                android:layout_weight="1"
-                                android:ellipsize="end"
-                                android:maxLines="1"
-                                android:text=" 105.643117"
-                                android:textColor="#90CAF9"
-                                android:textSize="9sp"
-                                android:typeface="monospace" />
-
-                        </LinearLayout>
-
-                        <!-- ZOOM BUTTON -->
-
-
-                    </FrameLayout>
+                    <ImageButton
+                        android:id="@+id/btnOverflow"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="More options"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_more_vert"
+                        app:tint="@color/white" />
 
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.appbar.MaterialToolbar>
 
-        </LinearLayout>
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPagerTop"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="4dp"
+                app:layout_constraintTop_toBottomOf="@id/toolbar"
+                app:layout_constraintBottom_toTopOf="@id/indicator"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <me.relex.circleindicator.CircleIndicator3
+                android:id="@+id/indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:padding="4dp"
+                app:layout_constraintTop_toBottomOf="@id/viewPagerTop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
