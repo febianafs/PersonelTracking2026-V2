@@ -56,8 +56,6 @@ class SplashActivity : AppCompatActivity() {
         val fadeIn = AnimationUtils.loadAnimation(this, R.anim.splash_fade_in)
         binding.imgLogo.startAnimation(fadeIn)
 
-        binding = ActivitySplashBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         binding.tvAppVersion.text =
             "ver ${BuildConfig.VERSION_NAME}"
 
@@ -70,9 +68,8 @@ class SplashActivity : AppCompatActivity() {
 
             if (sessionManager.isLoggedIn()) {
                 (application as App).mqttManager.connect()
+                MqttLocationService.startService(this@SplashActivity)
             }
-
-            MqttLocationService.startService(this@SplashActivity)
 
             val hasUpdate = checkForUpdate()
             minDelay.join()
