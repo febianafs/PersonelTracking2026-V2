@@ -99,6 +99,11 @@ class TopPagerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     // ══════════════════════════════════════════════════════════════════════
 
     class ProfileVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val tvCoordinates =
+            itemView.findViewById<TextView>(R.id.tvCoordinates)
+
+        private val tvCoordinates2 =
+            itemView.findViewById<TextView>(R.id.tvCoordinates2)
         private val imgAvatar  = itemView.findViewById<ImageView?>(R.id.imgAvatar)
         private val tvName     = itemView.findViewById<TextView?>(R.id.tvName)
         private val tvNRP      = itemView.findViewById<TextView?>(R.id.tvNRP)
@@ -120,6 +125,11 @@ class TopPagerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             avatarUrl: String?,
             onFullDataClick: (() -> Unit)? = null
         ) {
+            tvCoordinates.text =
+                String.format("%.6f", latitude)
+
+            tvCoordinates2.text =
+                String.format("%.6f", longitude)
             tvName?.text     = name
             tvNRP?.text      = nrp
             tvRank?.text     = rank

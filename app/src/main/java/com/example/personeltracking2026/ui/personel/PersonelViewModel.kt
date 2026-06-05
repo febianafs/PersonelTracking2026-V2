@@ -210,6 +210,7 @@ class PersonelViewModel(
             // Tidak membuat AppLocationManager sendiri
             locationRepository.locationFlow.collect { kotlinResult ->
                 val locationData = kotlinResult.getOrNull()
+                Log.d("GPS_RAW", "$locationData")
                 val error        = kotlinResult.exceptionOrNull()
 
                 if (locationData != null) {
@@ -343,11 +344,29 @@ class PersonelViewModel(
     }
 
     private fun processLocation(newLoc: LocationData): LocationData? {
-        if (newLoc.accuracy > 20f) return null
+
+        Log.d(
+            "GPS_FILTER",
+            "IN lat=${newLoc.lat}, lon=${newLoc.lon}, acc=${newLoc.accuracy}"
+        )
+
+        if (newLoc.accuracy > 20f) {
+            Log.d(
+                "GPS_FILTER",
+                "REJECT accuracy=${newLoc.accuracy}"
+            )
+            return null
+        }
 
         val last = lastAccepted
         if (last == null) {
             lastAccepted = newLoc
+
+            Log.d(
+                "GPS_FILTER",
+                "ACCEPT FIRST lat=${newLoc.lat}, lon=${newLoc.lon}, acc=${newLoc.accuracy}"
+            )
+
             return newLoc
         }
 
@@ -371,6 +390,12 @@ class PersonelViewModel(
             val blended    = newLoc.copy(lat = blendedLat, lon = blendedLon)
             val finalLoc   = smooth(blended, dt)
             lastAccepted   = finalLoc
+
+            Log.d(
+                "GPS_FILTER",
+                "ACCEPT SMALL lat=${finalLoc.lat}, lon=${finalLoc.lon}, acc=${finalLoc.accuracy}"
+            )
+
             return finalLoc
         }
 
@@ -389,6 +414,10 @@ class PersonelViewModel(
         val blended    = newLoc.copy(lat = blendedLat, lon = blendedLon)
         val finalLoc   = if (!moving) smooth(blended, dt) else blended
         lastAccepted   = finalLoc
+        Log.d(
+            "GPS_FILTER",
+            "ACCEPT MOVE lat=${finalLoc.lat}, lon=${finalLoc.lon}, acc=${finalLoc.accuracy}"
+        )
         return finalLoc
     }
 

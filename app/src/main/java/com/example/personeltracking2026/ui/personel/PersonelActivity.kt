@@ -362,6 +362,10 @@ class PersonelActivity : BaseActivity() {
                             if (!SosManager.isActive.value) {
 //                                updateMarker(it.lat, it.lon)
                             }
+                            Log.d(
+                                "GPS_UI",
+                                "lat=${it.lat}, lon=${it.lon}"
+                            )
                             pagerAdapter.latitude = it.lat
                             pagerAdapter.longitude = it.lon
                             pagerAdapter.notifyItemChanged(0)
@@ -795,7 +799,7 @@ class PersonelActivity : BaseActivity() {
         val config = MqttConfigManager(this).load()
 
         pagerAdapter.mqttHost = config.host ?: "-"
-        pagerAdapter.mqttPort = config.tcpPort.toString()
+        pagerAdapter.mqttPort = config.wsPort.toString()
         pagerAdapter.interval = mqttPrefs.getString("interval", "5 seconds") ?: "5 seconds"
 
         pagerAdapter.notifyItemChanged(2)

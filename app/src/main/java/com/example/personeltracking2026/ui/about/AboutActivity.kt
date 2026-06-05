@@ -134,9 +134,9 @@ class AboutActivity : BaseActivity() {
                             binding.tvAppName.text = data?.app_name ?: "Personel Tracking"
                             binding.tvAppCode.text = data?.app_code ?: "PT-2026"
                             binding.tvDev.text = data?.dev ?: "RTI Dev"
-                            binding.tvCompany.text = data?.company_name ?: "PT.STAR INTI TEKNOLOGI"
+                            binding.tvCompany.text = data?.company_name ?: "PT.DHARMAPALA AGUNG SEJAHTRA"
                             binding.tvCopyright.text = data?.copyright_text ?: "©2026"
-                            binding.tvAppVersion.text = BuildConfig.APP_VERSION
+                            binding.tvAppVersion.text = BuildConfig.VERSION_NAME
 //                            binding.tvLegalNotice.text = data?.legal_notice ?: "All rights reserved"
 
                             val privacyUrl = data?.privacy_policy_url
